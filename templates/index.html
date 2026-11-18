@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="stats">
+  <div class="stat"><span>{{ counts['Open'] }}</span>Open</div>
+  <div class="stat"><span>{{ counts['In progress'] }}</span>In progress</div>
+  <div class="stat"><span>{{ counts['Resolved'] }}</span>Resolved</div>
+  <div class="stat {% if overdue %}alert{% endif %}"><span>{{ overdue }}</span>Past SLA</div>
+</section>
+
+<form class="filters" method="get">
+  <input type="search" name="q" placeholder="Search tickets…" value="{{ current.q }}">
+  <select name="status">
+    <option value="">All statuses</option>
+    {% for s in statuses %}<option {% if current.status == s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+  </select>
+  <select name="priority">
+    <option value="">All priorities</option>
+    {% for p in priorities %}<option {% if current.priority == p %}selected{% endif %}>{{ p }}</option>{% endfor %}
+  </select>
+  <button type="submit">Filter</button>
+</form>
+
+{% if tickets %}
+<table>
+  <thead><tr><th>#</th><th>Title</th><th>Requester</th><th>Category</th><th>Priority</th><th>Status</th><th>Opened</th></tr></thead>
+  <tbody>
+  {% for t in tickets %}
+    <tr class="{% if is_overdue(t) %}overdue{% endif %}">
+      <td>{{ t.id }}</td>
+      <td><a href="{{ url_for('ticket_detail', ticket_id=t.id) }}">{{ t.title }}</a></td>
+      <td>{{ t.requester }}</td>
+      <td>{{ t.category }}</td>
+      <td><span class="pill p-{{ t.priority|lower }}">{{ t.priority }}</span></td>
+      <td><span class="pill s-{{ t.status|lower|replace(' ', '-') }}">{{ t.status }}</span></td>
+      <td>{{ t.created_at[:16]|replace('T', ' ') }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="empty">No tickets found. <a href="{{ url_for('new_ticket') }}">Log the first one</a>.</p>
+{% endif %}
+{% endblock %}

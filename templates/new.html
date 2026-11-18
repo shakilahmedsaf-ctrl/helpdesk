@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}New ticket · Mini IT Helpdesk{% endblock %}
+{% block content %}
+<h1>Log a new ticket</h1>
+<form class="card" method="post">
+  <label>Your name <input name="requester" value="{{ form.get('requester', '') }}" required></label>
+  <label>Short title <input name="title" maxlength="120" placeholder="e.g. Laptop won't connect to Wi-Fi" value="{{ form.get('title', '') }}" required></label>
+  <label>What's happening?
+    <textarea name="description" rows="5" placeholder="What were you doing, what did you expect, any error messages?" required>{{ form.get('description', '') }}</textarea>
+  </label>
+  <div class="row">
+    <label>Category
+      <select name="category">
+        {% for c in categories %}<option {% if form.get('category') == c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Priority
+      <select name="priority">
+        {% for p in priorities %}<option {% if form.get('priority', 'Medium') == p %}selected{% endif %}>{{ p }}</option>{% endfor %}
+      </select>
+    </label>
+  </div>
+  <button type="submit">Create ticket</button>
+</form>
+{% endblock %}
